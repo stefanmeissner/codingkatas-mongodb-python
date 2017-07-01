@@ -1,5 +1,7 @@
 import unittest
 from app.mongo_db_handler import MongoDbHandler
+from app.kata1.robofly import Robofly
+from app.kata1.robofly_object_mapper import encode_robofly
 
 class RoboFlyPersistenceTestCase(unittest.TestCase):
     DATABASE_NAME = "mobilerobotics"
@@ -14,14 +16,17 @@ class RoboFlyPersistenceTestCase(unittest.TestCase):
     def test_safe_robofly(self):
         self.assertEqual(self.mongodb_handler.count(self.__class__.COLLECTION_NAME), 0)
 
-        # TODO Robofly Class
-        robofly = {"_id": "RoboFly_ID_1",
-            "name": "Calliphora",
-            "constructionYear": 2014,
-            "size": 2,
-            "serviceTime": 60,
-            "status": "OK"}
-        object_id = self.mongodb_handler.insert_one(self.__class__.COLLECTION_NAME, robofly).inserted_id
+        robofly = Robofly(
+            robofly_id="RoboFly_ID_1",
+            name="Calliphora",
+            construction_year=2014,
+            size=2,
+            service_time=60,
+            status="OK")
+
+        robofly_document = encode_robofly(robofly)
+
+        object_id = self.mongodb_handler.insert_one(self.__class__.COLLECTION_NAME, robofly_document).inserted_id
         self.assertIsNotNone(object_id)
 
         self.assertEqual(self.mongodb_handler.count(self.__class__.COLLECTION_NAME), 1)
@@ -31,29 +36,32 @@ class RoboFlyPersistenceTestCase(unittest.TestCase):
 
         roboflies = []
 
-        robofly1 = {"_id": "RoboFly_ID_1",
-            "name": "Calliphora",
-            "constructionYear": 2014,
-            "size": 2,
-            "serviceTime": 60,
-            "status": "OK"}
-        roboflies.append(robofly1)
+        robofly1 = Robofly(
+            robofly_id="RoboFly_ID_1",
+            name="Calliphora",
+            construction_year=2014,
+            size=2,
+            service_time=60,
+            status="OK")
+        roboflies.append(encode_robofly(robofly1))
 
-        robofly2 = {"_id": "RoboFly_ID_2",
-            "name": "Lucilia",
-            "constructionYear": 2014,
-            "size": 2,
-            "serviceTime": 60,
-            "status": "OK"}
-        roboflies.append(robofly2)
+        robofly2 = Robofly(
+            robofly_id="RoboFlRoboFly_ID_2y_ID_1",
+            name="Lucilia",
+            construction_year=2014,
+            size=2,
+            service_time=60,
+            status="OK")
+        roboflies.append(encode_robofly(robofly2))
 
-        robofly3 = {"_id": "RoboFly_ID_3",
-            "name": "Onesia",
-            "constructionYear": 2014,
-            "size": 2,
-            "serviceTime": 60,
-            "status": "OK"}
-        roboflies.append(robofly3)
+        robofly3 = Robofly(
+            robofly_id="RoboFly_ID_3",
+            name="Onesia",
+            construction_year=2014,
+            size=2,
+            service_time=60,
+            status="OK")
+        roboflies.append(encode_robofly(robofly3))
 
         object_ids = self.mongodb_handler.insert_many(self.__class__.COLLECTION_NAME, roboflies).inserted_ids
         self.assertIsNotNone(object_ids)
